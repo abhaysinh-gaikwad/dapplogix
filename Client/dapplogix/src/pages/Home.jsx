@@ -23,26 +23,30 @@ import BlogForm from "../components/BlogForm";
 function Home() {
   const [blogs, setBlogs] = useState([]);
   const [comments, setComments] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isCommentsOpen, setIsCommentsOpen] = useState({});
 
-  async function fetchData() {
+  async function fetchData(page = 1) {
     try {
-      const response = await axios.get("https://dapplogix.onrender.com/blogs");
+      const response = await axios.get(`http://localhost:8080/blogs?page=${page}`);
       setBlogs(response.data.blogs);
+      const totalBlogs = response.data.totalBlogs;
+      setTotalPages(Math.ceil(totalBlogs / 10));
     } catch (error) {
       console.error(error);
     }
   }
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(currentPage);
+  }, [currentPage]);
 
   const handleLike = async (blogId) => {
     try {
       await axios.patch(
-        `https://dapplogix.onrender.com/blogs/likes/${blogId}`,
+        `http://localhost:8080/blogs/likes/${blogId}`,
         {},
         {
           headers: {
@@ -50,7 +54,7 @@ function Home() {
           },
         }
       );
-      fetchData();
+      fetchData(currentPage);
     } catch (error) {
       console.error(error);
     }
@@ -59,7 +63,7 @@ function Home() {
   const handleCommentSubmit = async (blogId, comment) => {
     try {
       await axios.post(
-        `https://dapplogix.onrender.com/comments/${blogId}`,
+        `http://localhost:8080/comments/${blogId}`,
         { comment },
         {
           headers: {
@@ -67,7 +71,7 @@ function Home() {
           },
         }
       );
-      fetchData();
+      fetchData(currentPage);
     } catch (error) {
       console.error(error);
     }
@@ -75,7 +79,7 @@ function Home() {
 
   const fetchComments = async (blogId) => {
     try {
-      const response = await axios.get(`https://dapplogix.onrender.com/comments/blogs/${blogId}`);
+      const response = await axios.get(`http://localhost:8080/comments/blogs/${blogId}`);
       const commentsWithUserInfo = response.data.comments.map(comment => ({
         ...comment,
         userId: {
@@ -94,6 +98,10 @@ function Home() {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -191,9 +199,21 @@ function Home() {
           </Box>
         ))}
       </VStack>
+      <HStack mt={8} spacing={2} justifyContent="center">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <Button
+            key={index + 1}
+            colorScheme={currentPage === index + 1 ? "blue" : "gray"}
+            onClick={() => handlePageChange(index + 1)}
+          >
+            {index + 1}
+          </Button>
+        ))}
+      </HStack>
       <BlogForm isOpen={isOpen} onClose={onClose} fetchData={fetchData} />
     </Container>
   );
 }
 
 export default Home;
+

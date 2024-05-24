@@ -15,7 +15,7 @@ blogRouter.use(cors());
 blogRouter.get("/", async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     try {
-        const blogs = await BlogModel.find().skip((page - 1) * 10).limit(10).sort({ createdAt: -1 });
+        const blogs = await BlogModel.find().skip((page - 1) * 5).limit(5).sort({ createdAt: -1 });
         res.status(200).send({ msg: "All blogs", blogs });
     } catch (err) {
         console.log(err);   
