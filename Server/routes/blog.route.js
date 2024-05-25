@@ -4,6 +4,8 @@ const cors = require('cors');
 const { BlogModel } = require("../model/blog.model");
 const { CommentModel } = require("../model/comment.model");
 const { auth } = require("../middleware/auth");
+const { uploadImageToCloudinary } = require("../utils/imageuploder");
+
 require("dotenv").config();
 
 const blogRouter = express.Router(); 
@@ -37,19 +39,33 @@ blogRouter.get("/myblogs", auth, async (req, res) => {
 });
 
 
-
-blogRouter.post("/", auth, async (req, res) => {
+blogRouter.post('/', auth, async (req, res) => {
     try {
-        const { title, content } = req.body;
-        const userId = req.user._id;
-        const blog = new BlogModel({ title, content, userId });
-        await blog.save();
-        res.status(201).send({ msg: "Blog created", blog });
+      const profileImage = req.files?.image;
+      if (!profileImage) {
+          return res.status(400).send({ Error: 'No image uploaded' });
+        }
+        
+        const image = await uploadImageToCloudinary(
+        profileImage.tempFilePath,
+        process.env.FOLDER_NAME,
+        1000,
+        1000
+    );
+    
+    const { title, content } = req.body;
+    console.log(profileImage, title, content);
+      const userId = req.user._id;
+      const username = req.user.username;
+      const blog = new BlogModel({ title, content, userId, username, image: image.secure_url });
+      await blog.save();
+      res.status(201).send({ msg: 'Blog created', blog });
     } catch (err) {
-        console.log(err);
-        res.status(400).send({ Error: "error occured while creating blog" });
+      console.log(err);
+      res.status(400).send({ Error: 'Error occurred while creating blog' });
     }
-});
+  });
+
 
 
 blogRouter.patch("/:id", auth, async (req, res) => {

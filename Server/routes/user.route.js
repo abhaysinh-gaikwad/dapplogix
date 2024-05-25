@@ -52,10 +52,10 @@ userRouter.post("/login", async (req, res) => {
     if (user) {
       bcrypt.compare(password, user.password, (err, result) => {
         if (result) {
-          const token = jwt.sign({ userId: user._id }, process.env.SECRETKEY, {
+          const token = jwt.sign({ userId: user._id, username: user.username }, process.env.SECRETKEY, {
             expiresIn: "3d",
           });
-          const refreshToken = jwt.sign({ userId: user._id }, process.env.REFRESHKEY, {
+          const refreshToken = jwt.sign({ userId: user._id, username: user.username }, process.env.REFRESHKEY, {
             expiresIn: "24h",
           });
           res
