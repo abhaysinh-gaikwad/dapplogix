@@ -3,14 +3,21 @@ import Register from "../components/auth/Register";
 // import Logout from "../components/auth/Logout";
 import Login from "../components/auth/Login";
 import Home from "../pages/Home";
+import Nabar from "../components/Navbar";
 
 const AllRoutes = () => {
   return (
-    <Routes>
+    
+    <div>
+      <Nabar />
+      <Routes>
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="/home" element={<Home />} />
-    </Routes>
+
+      </Routes>
+    </div>
+    
   );
 };
 export default AllRoutes;

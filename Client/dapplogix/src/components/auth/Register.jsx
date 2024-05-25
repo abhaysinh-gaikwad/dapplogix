@@ -1,28 +1,24 @@
-import React, { useState } from 'react';
+import { Box, InputGroup, InputRightElement } from "@chakra-ui/react";
+import { useState } from "react";
 import {
-  Box,
   Button,
   Checkbox,
-  FormControl,
-  FormControlLabel,
-  Grid,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  TextField,
-  Typography
-} from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+  Flex,
+  FormLabel,
+  Heading,
+  Input,
+  Stack,
+  Image,
+} from "@chakra-ui/react";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
   const handleRegister = (e) => {
     e.preventDefault();
     const payload = {
@@ -30,10 +26,10 @@ function Register() {
       email,
       password,
     };
-    fetch('https://dapplogix.onrender.com/users/register', {
-      method: 'POST',
+    fetch("https://dapplogix.onrender.com/users/register", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
     })
@@ -41,90 +37,75 @@ function Register() {
       .then((data) => console.log(data))
       .catch((err) => console.log(err));
   };
-
   return (
-    <Grid container component="main" sx={{ height: '100vh' }}>
-      <Grid
-        item
-        xs={12}
-        md={6}
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          p: 8,
-        }}
-      >
-        <Box component="form" onSubmit={handleRegister} sx={{ width: '100%', maxWidth: 400 }}>
-          <Typography component="h1" variant="h5" gutterBottom>
-            Sign in to your account
-          </Typography>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            label="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            label="Email address"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <FormControl variant="outlined" margin="normal" fullWidth>
-            <InputLabel>Password</InputLabel>
-            <OutlinedInput
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
+    <>
+      <Stack minH={"100vh"} direction={{ base: "column", md: "row" }}>
+        <Flex p={8} flex={1} align={"center"} justify={"center"}>
+          <Stack spacing={4} w={"full"} maxW={"md"}>
+            <Heading fontSize={"2xl"}>Sign in to your account</Heading>
+            <Box as="form" onSubmit={handleRegister}>
+              <FormLabel>Username</FormLabel>
+              <Input
+                type="text"
+                placeholder="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+
+              <FormLabel>Email address</FormLabel>
+              <Input
+                type="text"
+                placeholder="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <FormLabel>Password</FormLabel>
+              <InputGroup>
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <InputRightElement h={"full"}>
+                  <Button
+                    variant={"ghost"}
+                    onClick={() =>
+                      setShowPassword((showPassword) => !showPassword)
+                    }
                   >
-                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              }
-              label="Password"
-            />
-          </FormControl>
-          <FormControlLabel
-            control={<Checkbox color="primary" />}
-            label="Remember me"
+                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+
+              <Stack spacing={6}>
+                <Stack
+                  direction={{ base: "column", sm: "row" }}
+                  align={"start"}
+                  justify={"space-between"}
+                >
+                  <Checkbox>Remember me</Checkbox>
+                  {/* <Text color={"blue.500"}>Forgot password?</Text> */}
+                </Stack>
+                <Button colorScheme={"blue"} variant={"solid"} type="submit">
+                  Sign in
+                </Button>
+              </Stack>
+            </Box>
+          </Stack>
+        </Flex>
+        <Flex flex={1}>
+          <Image
+            alt={"Login Image"}
+            objectFit={"cover"}
+            src={
+              "https://onenhsfinance.nhs.uk/wp-content/uploads/2021/08/kanban-project-management.png"
+            }
           />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Sign in
-          </Button>
-        </Box>
-      </Grid>
-      <Grid
-        item
-        xs={false}
-        md={6}
-        sx={{
-          backgroundImage: 'url(https://onenhsfinance.nhs.uk/wp-content/uploads/2021/08/kanban-project-management.png)',
-          backgroundRepeat: 'no-repeat',
-          backgroundColor: (t) => t.palette.grey[50],
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
-    </Grid>
+        </Flex>
+      </Stack>
+    </>
   );
 }
 
