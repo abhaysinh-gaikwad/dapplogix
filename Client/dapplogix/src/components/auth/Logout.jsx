@@ -21,7 +21,7 @@ const LogoutButton = () => {
       );
 
       if (response.status === 200) {
-        localStorage.removeItem("token");
+        localStorage.clear();
         navigate("/login");
       } else {
         console.error(`Unexpected response status: ${response.status}`);

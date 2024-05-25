@@ -37,6 +37,7 @@ function Login() {
       console.log(data);
       if ( data.token) {
         localStorage.setItem("token", data.token);
+        
         navigate("/home"); 
       } else {
         alert("Invalid email or password");

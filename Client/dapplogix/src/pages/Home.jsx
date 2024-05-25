@@ -1,40 +1,198 @@
-
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import LogoutButton from "../components/auth/Logout";
-import { useEffect, useState } from "react";
-
-
+import {
+  Box,
+  Image,
+  Heading,
+  Text,
+  VStack,
+  HStack,
+  IconButton,
+  Avatar,
+  Container,
+  Stack,
+  Collapse,
+  useDisclosure,
+  Button,
+  Flex,
+} from "@chakra-ui/react";
+import { FaThumbsUp, FaComment } from "react-icons/fa";
+import CommentForm from "../components/CommentForm";
+import BlogForm from "../components/BlogForm";
 
 function Home() {
-
   const [blogs, setBlogs] = useState([]);
-  const [user, setUser] = useState({});
-  
-async function FetchData() {
-  try{
-    const data =  await axios.get("https://dapplogix.onrender.com/blogs")
-    console.log(data.data);
-    setBlogs(data.data.blogs);
-  }catch(error){
-    console.log(error);
-  }
-}
+  const [comments, setComments] = useState({});
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isCommentsOpen, setIsCommentsOpen] = useState({});
 
-useEffect(() => {
-  FetchData();
-}, []);
+  async function fetchData() {
+    try {
+      const response = await axios.get("https://dapplogix.onrender.com/blogs");
+      setBlogs(response.data.blogs);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleLike = async (blogId) => {
+    try {
+      await axios.patch(
+        `https://dapplogix.onrender.com/blogs/likes/${blogId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      fetchData();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCommentSubmit = async (blogId, comment) => {
+    try {
+      await axios.post(
+        `http://localhost:8080/comments/${blogId}`,
+        { comment },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      fetchData();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchComments = async (blogId) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/comments/blogs/${blogId}`);
+      const commentsWithUserInfo = response.data.comments.map(comment => ({
+        ...comment,
+        userId: {
+          ...comment.userId,
+          username: comment.username
+        }
+      }));
+      setComments((prevComments) => ({
+        ...prevComments,
+        [blogId]: commentsWithUserInfo,
+      }));
+      setIsCommentsOpen((prevOpen) => ({
+        ...prevOpen,
+        [blogId]: !prevOpen[blogId]
+      }));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <div>
-      <LogoutButton />
-      {blogs?.map((blog) => (
-        <div key={blog._id}>
-          <h1>{blog.title}</h1>
-          <p>{blog.content}</p>
-          <p>{blog.username}</p>
-          <img src={blog.image} alt="" />
-        </div>
-      ))}
-    </div>
+    <Container maxW="container.xl" py={6}>
+      <Flex justifyContent="space-between" alignItems="center" mb={6}>
+        <Heading as="h1" size="xl">
+          All Blogs
+        </Heading>
+        <Button onClick={onOpen}>Add Blog</Button>
+      </Flex>
+      <VStack spacing={16} align="flex-start">
+        {blogs.map((blog) => (
+          <Box
+            key={blog._id}
+            borderWidth="1px"
+            borderRadius="lg"
+            overflow="hidden"
+            w="full"
+            display="flex"
+            boxShadow={"2xl"}
+          >
+            <Image
+              src={blog.image}
+              alt={blog.title}
+              boxSize="300px"
+              margin={5}
+              objectFit="cover"
+            />
+            <Box flex="1" padding={15} overflowY="auto">
+              <Box p={6}>
+                <Heading as="h3" size="lg" mb={2}>
+                  {blog.title}
+                </Heading>
+                <Text mb={4}>{blog.content}</Text>
+                <Stack direction="row" align="center" mb={4}>
+                  <Avatar name={blog.username} />
+                  <Text>{blog.username}</Text>
+                </Stack>
+                <Text mb={4}>Created on: {new Date(blog.createdAt).toLocaleDateString()}</Text>
+                <HStack justifyContent="space-between">
+                  <HStack>
+                    <IconButton
+                      icon={<FaThumbsUp />}
+                      aria-label="Like"
+                      variant="outline"
+                      colorScheme={
+                        blog.likesId.includes(localStorage.getItem("userId"))
+                          ? "blue"
+                          : "gray"
+                      }
+                      onClick={() => handleLike(blog._id)}
+                    />
+                    <Text>{blog.likesId.length}</Text>
+                  </HStack>
+                  <HStack>
+                    <Text>{blog.commentsId.length}</Text>
+                    <IconButton
+                      icon={<FaComment />}
+                      aria-label="Comments"
+                      variant="outline"
+                      onClick={() => fetchComments(blog._id)}
+                    />
+                  </HStack>
+                </HStack>
+              </Box>
+              <Box mt={4}>
+                <Collapse in={isCommentsOpen[blog._id]} animateOpacity>
+                  {comments[blog._id] &&
+                    comments[blog._id].map((comment) => (
+                      <Box
+                        key={comment._id}
+                        borderWidth="1px"
+                        borderRadius="lg"
+                        p={4}
+                        mt={2}
+                      >
+                        <Stack direction="row" align="center">
+                          <Avatar name={comment.userId.username} />
+                          <Text fontWeight="bold">
+                            {comment.userId.username}
+                          </Text>
+                        </Stack>
+                        <Text mt={2}>{comment.comment}</Text>
+                      </Box>
+                    ))}
+                </Collapse>
+              </Box>
+              <Box mt={4} marginLeft={6}>
+                <CommentForm
+                  blogId={blog._id}
+                  onCommentSubmit={handleCommentSubmit}
+                />
+              </Box>
+            </Box>
+          </Box>
+        ))}
+      </VStack>
+      <BlogForm isOpen={isOpen} onClose={onClose} fetchData={fetchData} />
+    </Container>
   );
 }
 

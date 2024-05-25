@@ -14,10 +14,11 @@ commentRouter.post("/:id", auth, async (req, res) => {
         const { comment } = req.body;
         const { id } = req.params;
         const userId = req.user._id;
+        const username = req.user.username;
         const blog = await BlogModel.findOne({ _id: id });
 
         if (blog) {
-            const newComment = new CommentModel({ comment, userId, blogId: blog._id });
+            const newComment = new CommentModel({ comment, userId, blogId: blog._id, username });
             blog.commentsId.push(newComment._id);
             await blog.save();
             await newComment.save();
@@ -88,6 +89,18 @@ commentRouter.get("/mycomments", auth, async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(400).send({ Error: "error occured while fetching comments" });
+    }
+});
+
+commentRouter.get("/blogs/:blogId", async (req, res) => {
+    try {
+        const { blogId } = req.params;
+        console.log(blogId);
+        const comments = await CommentModel.find({ blogId });
+        res.status(200).send({ msg: "Comments fetched", comments });
+    } catch (err) {
+        console.log(err);
+        res.status(400).send({ Error: "error occurred while fetching comments" });
     }
 });
 

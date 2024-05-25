@@ -20,34 +20,21 @@ import {
 } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import LogoutButton from "./auth/Logout";
-// const Links = [
-//   { ids: 1, name: "register", link: "/register" },
-//   { ids: 2, name: "login", link: "/login" },
-//   { ids: 3, name: "home", link: "/home" },
-// ];
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Nav() {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const isProfilePage = location.pathname === "/profile";
+
   return (
     <>
       <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
         <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
-          <Box>Logo</Box>
-          {/* <HStack
-            as={"nav"}
-            spacing={8}
-            display={{ base: "flex", md: "flex" }}
-            justify={"flex-end"}
-            pl={[0, 0, 36, 52, 72, 72]}
-            pr={[0, 0, 36, 52, 72, 72]}
-          >
-            {Links.map((el) => (
-              <Link to={el.link} key={el.ids}>
-                {el.name}{" "}
-              </Link>
-            ))}
-          </HStack> */}
+          <Box>Blog Web App</Box>
           <Flex alignItems={"center"}>
             <Stack direction={"row"} spacing={7}>
               <Button onClick={toggleColorMode}>
@@ -64,7 +51,7 @@ export default function Nav() {
                 >
                   <Avatar
                     size={"sm"}
-                    src={"https://avatars.dicebear.com/api/male/username.svg"}
+                    src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHAtBxQren9wA-mJnn5r1w3kxV48l4PcSdAjPesSnZeA&s"}
                   />
                 </MenuButton>
                 <MenuList alignItems={"center"}>
@@ -72,32 +59,28 @@ export default function Nav() {
                   <Center>
                     <Avatar
                       size={"2xl"}
-                      src={"https://avatars.dicebear.com/api/male/username.svg"}
+                      src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHAtBxQren9wA-mJnn5r1w3kxV48l4PcSdAjPesSnZeA&s"}
                     />
                   </Center>
                   <br />
                   <Center>
-                    <p>Username</p>
+                    <Button onClick={() => isProfilePage ? navigate("/home") : navigate("/profile")} style={{ fontWeight: "bold" }}>
+                      {isProfilePage ? "Go to Home" : "Go to Profile"}
+                    </Button>
                   </Center>
                   <br />
                   <MenuDivider />
              
                   <MenuItem _hover={{ bg: "#f5f1ee" }} bg={"rgb(250,248,244)"}>
-                <Flex  flexDir={"row"}
-                  _hover={{ bg: "#f5f1ee" }}
-                  bg={"rgb(250,248,244)"}
-                  width={"100%"}
-                  // pr={24}
-                >
-                  <Image
-                    h={8}
-                    w={8}
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGOVXjlJMidDtZrU0mrXlHzHdFE9_gVlvCGw&s"
-                  />{" "}
-                  
-                  <LogoutButton />
-                </Flex>
-              </MenuItem>
+                    <Flex  flexDir={"row"} _hover={{ bg: "#f5f1ee" }} bg={"rgb(250,248,244)"}>
+                      <Image
+                        h={8}
+                        w={8}
+                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGOVXjlJMidDtZrU0mrXlHzHdFE9_gVlvCGw&s"
+                      />{" "}
+                      <LogoutButton />
+                    </Flex>
+                  </MenuItem>
                 </MenuList>
               </Menu>
             </Stack>

@@ -60,7 +60,7 @@ userRouter.post("/login", async (req, res) => {
           });
           res
             .status(201)
-            .send({ msg: "Login successful", token, refreshToken });
+            .send({ msg: "Login successful", token, refreshToken, userId:  user._id });
         } else {
           res.status(501).send({ msg: "Wrong password" });
         }
