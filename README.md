@@ -41,9 +41,17 @@ This is a full-stack blog web application where users can register, log in, crea
 ### Environment Variables
 
 Create a `.env` file in the `server` directory with the following environment variables:
-`PORT=5000`
-`MONGO_URI=your_mongodb_connection_string`
-`JWT_SECRET=your_jwt_secret`
+```
+
+PORT=8080
+mongoURL=your_mongodb_connection_string
+SECRETKEY=your_secret_key
+REFRESHKEY=your_secret_key
+CLOUDINARY_CLOUD_NAME=your_cloudname
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+FOLDER_NAME=your_folder_ame
+```
 
 ### Running the Application
 
@@ -62,21 +70,25 @@ Create a `.env` file in the `server` directory with the following environment va
 blog-web-app/
 ├── client/ # Frontend code
 │ ├── public/
-│ └── src/
-│ ├── components/ # React components
-│ ├── pages/ # React pages
-│ ├── App.js
+│ └── src
+│ │   ├── assets 
+│ │   ├── components/ # React components
+│ │   ├── pages/ # React pages
+│ │   ├── routes/ # React routes
+│ ├── App.jsx
 │ ├── index.js
 │ └── ...
 ├── server/ # Backend code
-│ ├── controllers/ # Controller functions
-│ ├── models/ # Mongoose models
-│ ├── routes/ # Express routes
+│ ├── config/ # cloudinary & db connection
 │ ├── middleware/ # Express middleware
-│ ├── server.js
-│ └── ...
+│ ├── model/ # Express models
+│ ├── routes/ # Express routes
+│ ├── utils/ # image uploader
+│ ├── .env
+│ ├── index.js
+│ └── package.json
 ├── README.md
-└── package.json
+
 ```
 ## Usage
 
