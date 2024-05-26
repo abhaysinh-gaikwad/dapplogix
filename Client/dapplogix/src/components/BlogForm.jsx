@@ -34,7 +34,7 @@ const BlogForm = ({ isOpen, onClose, fetchData }) => {
       formData.append("image", image);
 
       // Send a POST request with formData to the backend endpoint
-      const response = await axios.post("http://localhost:8080/blogs", formData, {
+      const response = await axios.post("https://dapplogix.onrender.com/blogs", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -38,7 +38,7 @@ function Login() {
       if ( data.token) {
         localStorage.setItem("token", data.token);
         
-        navigate("/home"); 
+        navigate("/"); 
       } else {
         alert("Invalid email or password");
       }
@@ -59,10 +59,7 @@ function Login() {
           <Text fontWeight={700} fontSize={"4xl"}>
             Sign in to your account
           </Text>
-          <Text fontSize={"lg"} color={"gray.600"}>
-            to enjoy all of our cool <p style={{ color: "blue" }}>features</p>{" "}
-            ✌️
-          </Text>
+         
         </Stack>
         <Box
           rounded={"lg"}
@@ -115,6 +112,18 @@ function Login() {
                 type="submit"
               >
                 Sign in
+              </Button>
+              <Button
+                bg={"white"}
+      
+                colorScheme={"blue"}
+                variant={"outline"}
+                _hover={{
+                  bg: "blue.500",
+                }}
+                onClick={() => navigate("/register")}
+              >
+                Register
               </Button>
             </Stack>
           </Box>

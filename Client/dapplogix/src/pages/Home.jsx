@@ -59,7 +59,7 @@ function Home() {
   const handleCommentSubmit = async (blogId, comment) => {
     try {
       await axios.post(
-        `http://localhost:8080/comments/${blogId}`,
+        `https://dapplogix.onrender.com/comments/${blogId}`,
         { comment },
         {
           headers: {
@@ -75,7 +75,7 @@ function Home() {
 
   const fetchComments = async (blogId) => {
     try {
-      const response = await axios.get(`http://localhost:8080/comments/blogs/${blogId}`);
+      const response = await axios.get(`https://dapplogix.onrender.com/comments/blogs/${blogId}`);
       const commentsWithUserInfo = response.data.comments.map(comment => ({
         ...comment,
         userId: {

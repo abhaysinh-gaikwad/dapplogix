@@ -42,7 +42,7 @@ function Register() {
       <Stack minH={"100vh"} direction={{ base: "column", md: "row" }}>
         <Flex p={8} flex={1} align={"center"} justify={"center"}>
           <Stack spacing={4} w={"full"} maxW={"md"}>
-            <Heading fontSize={"2xl"}>Sign in to your account</Heading>
+            <Heading fontSize={"2xl"}>Signup  </Heading>
             <Box as="form" onSubmit={handleRegister}>
               <FormLabel>Username</FormLabel>
               <Input
@@ -89,21 +89,13 @@ function Register() {
                   {/* <Text color={"blue.500"}>Forgot password?</Text> */}
                 </Stack>
                 <Button colorScheme={"blue"} variant={"solid"} type="submit">
-                  Sign in
+                  Sign 
                 </Button>
               </Stack>
             </Box>
           </Stack>
         </Flex>
-        <Flex flex={1}>
-          <Image
-            alt={"Login Image"}
-            objectFit={"cover"}
-            src={
-              "https://onenhsfinance.nhs.uk/wp-content/uploads/2021/08/kanban-project-management.png"
-            }
-          />
-        </Flex>
+        
       </Stack>
     </>
   );

@@ -1,46 +1,61 @@
-import { ReactNode } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Flex,
   Avatar,
-  Link,
   Button,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   MenuDivider,
-  useDisclosure,
   useColorModeValue,
   Stack,
   useColorMode,
   Center,
-  HStack,
   Image,
 } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-import LogoutButton from "./auth/Logout";
 import { useNavigate, useLocation } from "react-router-dom";
+import LogoutButton from "./auth/Logout";
 
 export default function Nav() {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
   const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
   const isProfilePage = location.pathname === "/profile";
 
-  return (
-    <>
-      <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
-        <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
-          <Box>Blog Web App</Box>
-          <Flex alignItems={"center"}>
-            <Stack direction={"row"} spacing={7}>
-              <Button onClick={toggleColorMode}>
-                {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-              </Button>
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setIsLoggedIn(!!localStorage.getItem("token"));
+    };
 
+    window.addEventListener("storage", handleStorageChange);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Check for token on component mount
+    setIsLoggedIn(!!localStorage.getItem("token"));
+  }, [location.pathname]);
+
+  return (
+    <Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
+      <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
+        <Box>Blog Web App</Box>
+        <Flex alignItems={"center"}>
+          <Stack direction={"row"} spacing={7}>
+            <Button onClick={toggleColorMode}>
+              {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+            </Button>
+
+            {isLoggedIn ? (
               <Menu>
                 <MenuButton
                   as={Button}
@@ -51,7 +66,9 @@ export default function Nav() {
                 >
                   <Avatar
                     size={"sm"}
-                    src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHAtBxQren9wA-mJnn5r1w3kxV48l4PcSdAjPesSnZeA&s"}
+                    src={
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHAtBxQren9wA-mJnn5r1w3kxV48l4PcSdAjPesSnZeA&s"
+                    }
                   />
                 </MenuButton>
                 <MenuList alignItems={"center"}>
@@ -59,20 +76,26 @@ export default function Nav() {
                   <Center>
                     <Avatar
                       size={"2xl"}
-                      src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHAtBxQren9wA-mJnn5r1w3kxV48l4PcSdAjPesSnZeA&s"}
+                      src={
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHAtBxQren9wA-mJnn5r1w3kxV48l4PcSdAjPesSnZeA&s"
+                      }
                     />
                   </Center>
                   <br />
                   <Center>
-                    <Button onClick={() => isProfilePage ? navigate("/home") : navigate("/profile")} style={{ fontWeight: "bold" }}>
+                    <Button
+                      onClick={() =>
+                        isProfilePage ? navigate("/") : navigate("/profile")
+                      }
+                      style={{ fontWeight: "bold" }}
+                    >
                       {isProfilePage ? "Go to Home" : "Go to Profile"}
                     </Button>
                   </Center>
                   <br />
                   <MenuDivider />
-             
                   <MenuItem _hover={{ bg: "#f5f1ee" }} bg={"rgb(250,248,244)"}>
-                    <Flex  flexDir={"row"} _hover={{ bg: "#f5f1ee" }} bg={"rgb(250,248,244)"}>
+                    <Flex flexDir={"row"} _hover={{ bg: "#f5f1ee" }} bg={"rgb(250,248,244)"}>
                       <Image
                         h={8}
                         w={8}
@@ -83,10 +106,15 @@ export default function Nav() {
                   </MenuItem>
                 </MenuList>
               </Menu>
-            </Stack>
-          </Flex>
+            ) : (
+              <>
+                <Button onClick={() => navigate("/login")}>Login</Button>
+                <Button onClick={() => navigate("/register")}>Register</Button>
+              </>
+            )}
+          </Stack>
         </Flex>
-      </Box>
-    </>
+      </Flex>
+    </Box>
   );
 }
