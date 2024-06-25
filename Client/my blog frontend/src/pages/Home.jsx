@@ -10,7 +10,7 @@ import {
   IconButton,
   Avatar,
   Container,
-  
+
   Stack,
   Collapse,
   useDisclosure,
@@ -33,7 +33,7 @@ function Home() {
 
   async function fetchData(page = 1) {
     try {
-      const response = await axios.get(`BaseURL/blogs?page=${page}`);
+      const response = await axios.get(`${BaseURL}/blogs?page=${page}`);
       setBlogs(response.data.blogs);
       const totalBlogs = response.data.totalBlogs;
       setTotalPages(Math.ceil(totalBlogs / 10));
@@ -82,7 +82,7 @@ function Home() {
 
   const fetchComments = async (blogId) => {
     try {
-      const response = await axios.get(`BaseURL/comments/blogs/${blogId}`);
+      const response = await axios.get(`${BaseURL}/comments/blogs/${blogId}`);
       const commentsWithUserInfo = response.data.comments.map(comment => ({
         ...comment,
         userId: {
