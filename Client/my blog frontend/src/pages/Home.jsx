@@ -10,6 +10,7 @@ import {
   IconButton,
   Avatar,
   Container,
+  
   Stack,
   Collapse,
   useDisclosure,
@@ -19,6 +20,8 @@ import {
 import { FaThumbsUp, FaComment } from "react-icons/fa";
 import CommentForm from "../components/CommentForm";
 import BlogForm from "../components/BlogForm";
+
+const BaseURL = `https://all-backend-servers.onrender.com`
 
 function Home() {
   const [blogs, setBlogs] = useState([]);
@@ -30,7 +33,7 @@ function Home() {
 
   async function fetchData(page = 1) {
     try {
-      const response = await axios.get(`http://localhost:8080/blogs?page=${page}`);
+      const response = await axios.get(`BaseURL/blogs?page=${page}`);
       setBlogs(response.data.blogs);
       const totalBlogs = response.data.totalBlogs;
       setTotalPages(Math.ceil(totalBlogs / 10));
@@ -46,7 +49,7 @@ function Home() {
   const handleLike = async (blogId) => {
     try {
       await axios.patch(
-        `http://localhost:8080/blogs/likes/${blogId}`,
+        `BaseURL/blogs/likes/${blogId}`,
         {},
         {
           headers: {
@@ -63,7 +66,7 @@ function Home() {
   const handleCommentSubmit = async (blogId, comment) => {
     try {
       await axios.post(
-        `http://localhost:8080/comments/${blogId}`,
+        `/comments/${blogId}`,
         { comment },
         {
           headers: {
@@ -79,7 +82,7 @@ function Home() {
 
   const fetchComments = async (blogId) => {
     try {
-      const response = await axios.get(`http://localhost:8080/comments/blogs/${blogId}`);
+      const response = await axios.get(`BaseURL/comments/blogs/${blogId}`);
       const commentsWithUserInfo = response.data.comments.map(comment => ({
         ...comment,
         userId: {
